@@ -8,15 +8,10 @@ import androidx.room.PrimaryKey
 @Entity
 data class Task (
     @PrimaryKey(autoGenerate = true)
-    val id:Int? = null,
-    @ColumnInfo
-    var title:String? = null,
-    @ColumnInfo
+    val id:Int=0,
+    var title:String,
     var description:String? = null,
-    @ColumnInfo
-    var date:Long? = null,
-    @ColumnInfo
-    var time:Long? = null,
-    @ColumnInfo
-    var isDone :Boolean? = false,
+    var date:Long,
+    var time:Long,
+    var isDone :Boolean = false,
 )

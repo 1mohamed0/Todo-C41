@@ -12,8 +12,10 @@ interface TasksDao {
 
     @Insert
     fun insertNewTask(task: Task)
+
     @Delete
     fun deleteTask(task: Task)
+
     @Update
     fun updateTask(task: Task)
 

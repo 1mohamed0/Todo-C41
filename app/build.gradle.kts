@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.route.todoc41"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.route.todoc41"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -34,6 +34,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures{
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -45,6 +48,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
+    implementation(libs.material.calendarview)
 
 
     testImplementation(libs.junit)
