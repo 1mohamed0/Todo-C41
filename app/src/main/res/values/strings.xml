@@ -27,10 +27,17 @@
         <item>English</item>
         <item>Arabic</item>
     </string-array>
+    <string-array name="language_code">
+        <item>en</item>
+        <item>ar</item>
+    </string-array>
 
     <string-array name="modes">
         <item>Light</item>
         <item>Dark</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="edit_your_task">Edit Your Task</string>
 
 </resources>

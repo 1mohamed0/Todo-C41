@@ -1,42 +1,101 @@
-package com.route.todoc41.ui.home.fragments.tasks_fragment
+package com.example.todo.ui.home.adapter
 
-import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.route.todoc41.R
 import com.route.todoc41.database.entity.Task
 import com.route.todoc41.databinding.ItemTaskBinding
-import com.route.todoc41.ui.util.getFormattedTime
+import com.route.todoc41.ui.util.getAmPm
+import com.route.todoc41.ui.util.getHourIn12
 import java.util.Calendar
 
-class TasksAdapter:RecyclerView.Adapter<TasksAdapter.TaskViewHolder>() {
-    private var tasksList = mutableListOf<Task>()
+class TasksAdapter(var color: Int? = null, var tasks: MutableList<Task>? = null) :
+    RecyclerView.Adapter<TasksAdapter.ViewHolder>() {
+    inner class ViewHolder(val binding: ItemTaskBinding, val color: Int?) :
+        RecyclerView.ViewHolder(binding.root) {
 
-    @SuppressLint("NotifyDataSetChanged")
-    fun setTasksList(tasks:MutableList<Task>){
-        tasksList = tasks
-        notifyDataSetChanged()
-    }
+        fun changeTaskStatus(isDone: Boolean, color: Int? = null) {
+            if (isDone) {
+                binding.draggingBar.setImageResource(R.drawable.dragging_bar_done)
+                binding.title.setTextColor(Color.GREEN)
+                binding.btnTaskIsDone.setBackgroundResource(R.drawable.done)
 
-    class TaskViewHolder(val binding: ItemTaskBinding):RecyclerView.ViewHolder(binding.root){
-        fun bind(task:Task){
-           binding.title.text = task.title
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = task.time
-            val hr = calendar.get(Calendar.HOUR)
-            val minutes = calendar.get(Calendar.MINUTE)
-           binding.time.text = getFormattedTime(hr, minutes)
+
+            } else {
+                color?.let {
+                    binding.title.setTextColor(it)
+                    binding.draggingBar.setImageResource(R.drawable.dragging_bar)
+                }
+                binding.btnTaskIsDone.setBackgroundResource(R.drawable.check_mark)
+
+            }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder =
-        TaskViewHolder(ItemTaskBinding.inflate(LayoutInflater.from(parent.context),parent,false))
-
-
-    override fun getItemCount(): Int = tasksList.size
-
-    override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        val task = tasksList[position]
-        holder.bind(task)
+    fun setColor(color: Int) {
+        this.color = color
     }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = ItemTaskBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding, color)
+    }
+
+    override fun getItemCount(): Int = tasks?.size ?: 0
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val task = tasks?.get(position)!!
+        holder.binding.title.text = task.title
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = task.time!!
+        holder.changeTaskStatus(task.isDone, color)
+
+        val hr = calendar.get(Calendar.HOUR)
+        val min = calendar.get(Calendar.MINUTE)
+        val minutesString = if (min == 0) "00" else min.toString()
+        holder.binding.time.text = "${getHourIn12(hr)}:$minutesString ${getAmPm(hr)}"
+
+        onButtonClickedListener?.let { onButtonClickedListener ->
+            holder.binding.btnTaskIsDone.setOnClickListener {
+                onButtonClickedListener.onButtonClicked(position, task)
+            }
+        }
+        onDeleteClickedListener?.let {
+            holder.binding.rightView.setOnClickListener {
+                onDeleteClickedListener?.onButtonClicked(position, task)
+            }
+        }
+
+        onItemClickedListener?.let {
+            holder.binding.dragItem.setOnClickListener {
+                onItemClickedListener?.onButtonClicked(position, task)
+            }
+        }
+
+    }
+
+    fun updateTasks(tasks: MutableList<Task>) {
+        this.tasks = tasks
+        notifyDataSetChanged()
+    }
+
+    fun updateTask(task: Task, position: Int) {
+        this.tasks?.set(position, task)
+        notifyItemChanged(position)
+    }
+
+    fun deleteTask(task: Task) {
+        this.tasks?.remove(task)
+        notifyDataSetChanged()
+    }
+
+    var onItemClickedListener: OnItemClickedListener? = null
+    var onButtonClickedListener: OnItemClickedListener? = null
+    var onDeleteClickedListener: OnItemClickedListener? = null
+
+    fun interface OnItemClickedListener {
+        fun onButtonClicked(position: Int, task: Task)
+    }
+
 }
