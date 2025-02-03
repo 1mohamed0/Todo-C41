@@ -3,7 +3,6 @@ package com.route.todoc41.ui.util
 import android.content.Intent
 import android.os.Build
 import android.os.Parcelable
-import kotlin.math.min
 
 fun getFormattedTime(hour:Int,minutes:Int):String{
     val minutesString = if (minutes==0) "00" else minutes.toString()
@@ -16,6 +15,7 @@ fun getHourIn12(hour: Int):Int{
 
 fun getAmPm(hour: Int):String{
     return if (hour<12) "AM" else "PM"
+
 }
 inline fun <reified T : Parcelable> Intent.parcelable(key: String): T? = when {
     Build.VERSION.SDK_INT >= 33 -> getParcelableExtra(key, T::class.java)

@@ -7,10 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-
 import com.example.todo.ui.home.adapter.TasksAdapter
-
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.route.todoc41.R
 import com.route.todoc41.database.MyDatabase
@@ -18,8 +15,8 @@ import com.route.todoc41.database.dao.TasksDao
 import com.route.todoc41.database.entity.Task
 import com.route.todoc41.databinding.FragmentTasksBinding
 import com.route.todoc41.ui.home.TaskEditeActivity
-
 import com.route.todoc41.ui.util.Constant
+import com.route.todoc41.ui.util.clearTime
 import java.util.Calendar
 
 class TasksFragment : Fragment() {
@@ -111,7 +108,7 @@ class TasksFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         activity?.let { dao = MyDatabase.init(it.applicationContext).tasksDao() }
-        loadAllTasksOfDate(selectedDate)
+        loadAllTasksOfDate(getSelectedDate().timeInMillis)
         tasksAdapter.setColor(ContextCompat.getColor(requireContext(), R.color.blue))
 
     }
@@ -122,6 +119,19 @@ class TasksFragment : Fragment() {
         tasksAdapter.updateTasks(tasks)
 
 
+    }
+    private fun getSelectedDate(): Calendar {
+        val calendar = Calendar.getInstance()
+        if (binding.calendarView.selectedDate != null) {
+            calendar.set(Calendar.YEAR, binding.calendarView.selectedDate!!.year)
+        }
+        binding.calendarView.selectedDate?.let { date ->
+            calendar.set(Calendar.YEAR, date.year)
+            calendar.set(Calendar.MONTH, date.month - 1)
+            calendar.set(Calendar.DAY_OF_MONTH, date.day)
+        }
+        calendar.clearTime()
+        return calendar
     }
 
 }
